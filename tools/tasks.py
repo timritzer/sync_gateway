@@ -21,6 +21,8 @@ import urllib2
 import base64
 import mmap
 
+from cblogredaction import Redact_file
+
 class AltExitC(object):
     def __init__(self):
         self.list = []
@@ -56,6 +58,7 @@ AltExit = AltExitC()
 def log(message, end = '\n'):
     sys.stderr.write(message + end)
     sys.stderr.flush()
+
 
 class Task(object):
     privileged = False
@@ -255,6 +258,42 @@ class TaskRunner(object):
 
         elif self.verbosity >= 2:
             log('Skipping "%s" (%s): not for platform %s' % (task.description, command_to_print, sys.platform))
+
+    def redact_and_zip(self, filename, log_type, salt, node):
+        """Redact and write all our logs to a zipfile"""
+        exe = exec_name("gozip")
+
+        prefix = "%s_%s_%s" % (log_type, node, self.start_time)
+
+        files = []
+        for name, fp in self.files.iteritems():
+            r = Redact_file(name, salt)
+            fp.close()
+            _, tail = os.path.split(fp.name)
+            files.append("redacted-" + tail)
+
+        fallback = False
+
+        try:
+            p = subprocess.Popen([exe, "-strip-path", "-prefix", prefix, filename] + files,
+                                 stderr=subprocess.STDOUT,
+                                 stdin=subprocess.PIPE)
+            p.stdin.close()
+            status = p.wait()
+
+            if status != 0:
+                log("gozip terminated with non-zero exit code (%d)" % status)
+        except OSError, e:
+            log("Exception during compression: %s" % e)
+            fallback = True
+
+        if fallback:
+            log("IMPORTANT:")
+            log("  Compression using gozip failed.")
+            log("  Falling back to python implementation.")
+            log("  Please let us know about this and provide console output.")
+
+            self._zip_fallback(filename, prefix, files)
 
     def zip(self, filename, log_type, node):
         """Write all our logs to a zipfile"""
@@ -959,5 +998,3 @@ def exec_name(name):
     if sys.platform == 'win32':
         name += ".exe"
     return name
-
-
