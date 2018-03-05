@@ -239,7 +239,7 @@ func (doc *document) IsChannelRemoval(revID string) (body Body, history Body, ch
 	}
 
 	// Build revision history for revID
-	revHistory := doc.History.getHistory(revID)
+	revHistory, _ := doc.History.getHistory(revID)
 	// If there's no history (because the revision has been pruned from the rev tree), treat revision history as only the specified rev id.
 	if len(revHistory) == 0 {
 		revHistory = []string{revID}
