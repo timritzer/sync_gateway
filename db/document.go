@@ -225,7 +225,7 @@ func (doc *document) IsChannelRemoval(revID string) (body Body, history Body, ch
 	}
 	// If no matches found, return isRemoval=false
 	if len(channels) == 0 {
-		return nil, nil, nil, false
+		return nil, nil, nil, false, nil
 	}
 
 	// Construct removal body
@@ -244,14 +244,14 @@ func (doc *document) IsChannelRemoval(revID string) (body Body, history Body, ch
 	if err != nil {
 		return nil, nil, nil, false, err
 	}
-	
+
 	// If there's no history (because the revision has been pruned from the rev tree), treat revision history as only the specified rev id.
 	if len(revHistory) == 0 {
 		revHistory = []string{revID}
 	}
 	history = encodeRevisions(revHistory)
 
-	return body, history, channels, true
+	return body, history, channels, true, nil
 }
 
 // Updates a document's channel/role UserAccessMap with new access settings from an AccessMap.
