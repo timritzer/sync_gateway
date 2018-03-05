@@ -209,7 +209,7 @@ func (doc *document) updateChannels(newChannels base.Set) (changedChannels base.
 
 // Determine whether the specified revision was a channel removal, based on doc.Channels.  If so, construct the standard document body for a
 // removal notification (_removed=true)
-func (doc *document) IsChannelRemoval(revID string) (body Body, history Body, channels base.Set, isRemoval bool) {
+func (doc *document) IsChannelRemoval(revID string) (body Body, history Body, channels base.Set, isRemoval bool, err error) {
 
 	channels = make(base.Set)
 
@@ -239,7 +239,12 @@ func (doc *document) IsChannelRemoval(revID string) (body Body, history Body, ch
 	}
 
 	// Build revision history for revID
-	revHistory, _ := doc.History.getHistory(revID)
+	revHistory, err := doc.History.getHistory(revID)
+
+	if err != nil {
+		return nil, nil, nil, false, err
+	}
+	
 	// If there's no history (because the revision has been pruned from the rev tree), treat revision history as only the specified rev id.
 	if len(revHistory) == 0 {
 		revHistory = []string{revID}

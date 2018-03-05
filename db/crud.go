@@ -92,7 +92,10 @@ func (context *DatabaseContext) revCacheLoader(id IDAndRev) (body Body, history 
 	if body, err = context.getRevision(doc, id.RevID); err != nil {
 		// If we can't find the revision (either as active or conflicted body from the document, or as old revision body backup), check whether
 		// the revision was a channel removal.  If so, we want to store as removal in the revision cache
-		removalBody, removalHistory, removalChannels, isRemoval := doc.IsChannelRemoval(id.RevID)
+		removalBody, removalHistory, removalChannels, isRemoval, isRemovalErr := doc.IsChannelRemoval(id.RevID)
+		if isRemovalErr != nil {
+			return body, history, channels, isRemovalErr
+		}
 		if isRemoval {
 			return removalBody, removalHistory, removalChannels, nil
 		} else {
