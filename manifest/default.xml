@@ -16,6 +16,7 @@
   <remote fetch="https://github.com/coreos/" name="coreos"/>
   <remote fetch="https://github.com/jonboulle/" name="jonboulle"/>
   <remote fetch="https://github.com/satori/" name="satori"/>
+  <remote fetch="https://github.com/timritzer/" name="tim" />
 
   <remote fetch="ssh://git@github.com/couchbaselabs/" name="couchbaselabs_private" />
   
@@ -30,7 +31,7 @@
 
   
   <!-- Sync Gateway -->
-  <project name="sync_gateway" path="godeps/src/github.com/couchbase/sync_gateway" remote="couchbase"/> 
+  <project name="sync_gateway" path="godeps/src/github.com/couchbase/sync_gateway" remote="tim"/> 
 
   
   <!-- Sync Gateway Accel-->
