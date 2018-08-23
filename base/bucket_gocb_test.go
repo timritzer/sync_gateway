@@ -1740,12 +1740,9 @@ func TestApplyViewQueryOptions(t *testing.T) {
 		ViewQueryParamStartKeyDocId: "baz",
 		ViewQueryParamEndKeyDocId:   "blah",
 		ViewQueryParamKey:           "hello",
-		ViewQueryParamKeys:          []string{"a", "b"},
+		ViewQueryParamKeys:          []interface{}{"a", "b"},
 	}
-
-	// add ViewQueryParamKeys param, which is a json array
-	params[ViewQueryParamKeys] = []string{"a", "b"}
-
+	
 	// Create a new viewquery
 	viewQuery := gocb.NewViewQuery("ddoc", "viewname")
 

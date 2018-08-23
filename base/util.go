@@ -85,6 +85,21 @@ func FixJSONNumbers(value interface{}) interface{} {
 	return value
 }
 
+func ConvertToEmptyInterfaceSlice(i interface{}) (result []interface{}, err error) {
+	switch v := i.(type) {
+	case []string:
+		result = make([]interface{}, len(v))
+		for index, value := range v {
+			result[index] = value
+		}
+		return result, nil
+	case []interface{}:
+		return v, nil
+	default:
+		return nil, fmt.Errorf("Unexpected type passed to ConvertToEmptyInterfaceSlice: %T", i)
+	}
+ }
+
 var kBackquoteStringRegexp *regexp.Regexp
 
 // Preprocesses a string containing `...`-delimited strings. Converts the backquotes into double-quotes,
